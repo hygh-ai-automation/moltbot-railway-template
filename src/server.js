@@ -10,6 +10,11 @@ import * as tar from "tar";
 
 // Railway commonly sets PORT=8080 for HTTP services.
 const PORT = Number.parseInt(process.env.PORT ?? "8080", 10);
+// Bind to :: so Railway private networking works for IPv4/IPv6. Override via HOST/LISTEN_HOST if needed.
+const HOST =
+  process.env.HOST?.trim() ||
+  process.env.LISTEN_HOST?.trim() ||
+  "::";
 const STATE_DIR =
   process.env.OPENCLAW_STATE_DIR?.trim() ||
   path.join(os.homedir(), ".openclaw");
@@ -920,9 +925,9 @@ app.use(async (req, res) => {
 });
 
 // Create HTTP server from Express app
-const server = app.listen(PORT, () => {
-  console.log(`[wrapper] listening on port ${PORT}`);
-  console.log(`[wrapper] setup wizard: http://localhost:${PORT}/setup`);
+const server = app.listen(PORT, HOST, () => {
+  console.log(`[wrapper] listening on ${HOST}:${PORT}`);
+  console.log(`[wrapper] setup wizard: http://${HOST === "::" ? "[::]" : HOST}:${PORT}/setup`);
   console.log(`[wrapper] configured: ${isConfigured()}`);
 });
 

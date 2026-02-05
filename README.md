@@ -50,6 +50,13 @@ Then:
 - Complete setup
 - Visit `https://<your-app>.up.railway.app/` and `/openclaw`
 
+## Private networking (for internal callers)
+
+- The wrapper listens on `::` by default (override with `HOST` or `LISTEN_HOST` if you really need to). This works in both new IPv4/IPv6 and legacy IPv6-only Railway environments.
+- To let another Railway service call Openclaw without going over the public internet, keep **Private Networking** enabled in the template and hit the internal hostname + port, e.g. `http://<service>.railway.internal:${PORT}` or `http://${{openclaw.RAILWAY_PRIVATE_DOMAIN}}:${{openclaw.PORT}}`.
+- You still need **Public Networking** for humans to reach `/setup` and `/openclaw`; the private network only serves other services in the same Railway project + environment.
+- Private networking isn’t available during the build phase, so keep any runtime checks in the app itself.
+
 ## Getting chat tokens (so you don’t have to scramble)
 
 ### Telegram bot token
